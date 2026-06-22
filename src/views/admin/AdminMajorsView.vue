@@ -114,12 +114,12 @@ onMounted(loadData);
                 <el-button
                   link
                   @click="
-                    editing = row;
+                    editing = (row as MajorPageQueryVO);
                     dialogVisible = true;
                   "
                   >编辑</el-button
                 >
-                <el-button link type="danger" @click="remove(row)"
+                <el-button link type="danger" @click="remove(row as MajorPageQueryVO)"
                   >删除</el-button
                 >
               </el-space>

@@ -169,6 +169,10 @@ const handleStudentChange = async (studentNumber: string) => {
   }
 };
 
+const handleSelectStudent = (row: StudentVO | null) => {
+  if (row) selectStudent(row);
+};
+
 const selectStudent = async (row: StudentVO) => {
   const studentNumber = row?.userNumber || '';
   if (studentNumber === selectedStudentNumber.value) return;
@@ -186,6 +190,10 @@ const handleQuestionChange = async (questionId: string) => {
   if (selectedQuestionId.value && selectedStudentNumber.value) {
     await loadQuestionSubmission();
   }
+};
+
+const handleSelectQuestion = (row: QuestionsBriefVO | null) => {
+  if (row) selectQuestion(row);
 };
 
 const selectQuestion = async (row: QuestionsBriefVO) => {
@@ -213,6 +221,10 @@ const loadSubmission = async () => {
   } finally {
     loading.value = false;
   }
+};
+
+const handleSelectQuestionSubmission = (row: QuestionSubmissionsVO | null) => {
+  selectQuestionSubmission(row);
 };
 
 const selectQuestionSubmission = async (row: QuestionSubmissionsVO | null) => {
@@ -367,7 +379,7 @@ loadClasses();
               :data="filteredStudents"
               highlight-current-row
               max-height="400"
-              @current-change="selectStudent"
+              @current-change="handleSelectStudent"
             >
               <el-table-column label="学号" prop="userNumber" width="140" />
               <el-table-column label="姓名" prop="realName" width="120" />
@@ -450,7 +462,7 @@ loadClasses();
               :current-row-key="selectedQuestionId"
               :data="questions"
               highlight-current-row
-              @current-change="selectQuestion"
+              @current-change="handleSelectQuestion"
             >
               <el-table-column label="顺序" prop="questionOrder" width="90" />
               <el-table-column label="题目标题" min-width="200" prop="title" />
@@ -480,7 +492,7 @@ loadClasses();
             v-if="questionSubmissions.length"
             :data="questionSubmissions"
             highlight-current-row
-            @current-change="selectQuestionSubmission"
+            @current-change="handleSelectQuestionSubmission"
           >
             <el-table-column label="提交 ID" prop="id" width="100" />
             <el-table-column label="题目 ID" prop="questionId" width="100" />

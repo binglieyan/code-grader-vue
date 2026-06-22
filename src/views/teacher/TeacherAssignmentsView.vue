@@ -42,7 +42,7 @@ const testCaseDialog = ref(false);
 
 const editingAssignment = ref<Partial<AssignmentVO> | null>(null);
 const editingQuestion = ref<Partial<QuestionsVO> | null>(null);
-const editingTestCase = ref<Partial<TestCasesVO> | null>(null);
+const editingTestCase = ref<(Partial<TestCasesVO> & { inputDataText?: string }) | null>(null);
 
 // 作业搜索文本
 const assignmentSearchText = ref('');
@@ -213,6 +213,10 @@ const openQuestionDialog = (question: QuestionsVO | null = null) => {
   questionDialog.value = true;
 };
 
+const handleAssignmentChange = (row: AssignmentVO | null) => {
+  if (row) selectAssignment(row);
+};
+
 const selectAssignment = async (row: AssignmentVO) => {
   if (!row?.id) return;
 
@@ -243,6 +247,10 @@ const selectAssignment = async (row: AssignmentVO) => {
     const message = error instanceof Error ? error.message : '加载题目失败';
     ElMessage.error(message);
   }
+};
+
+const handleQuestionChange = (row: QuestionsVO | null) => {
+  if (row) selectQuestion(row);
 };
 
 const selectQuestion = async (row: QuestionsVO) => {
@@ -591,7 +599,7 @@ onMounted(loadClasses);
           :data="filteredAssignments"
           highlight-current-row
           row-key="id"
-          @current-change="selectAssignment"
+          @current-change="handleAssignmentChange"
         >
           <el-table-column label="标题" min-width="120" prop="title" />
           <el-table-column label="班级" prop="classCode" width="80" />
@@ -619,12 +627,12 @@ onMounted(loadClasses);
                 <el-button
                   link
                   @click="
-                    editingAssignment = row;
+                    editingAssignment = (row as AssignmentVO);
                     assignmentDialog = true;
                   "
                   >编辑</el-button
                 >
-                <el-button link type="danger" @click="removeAssignment(row)"
+                <el-button link type="danger" @click="removeAssignment(row as AssignmentVO)"
                   >删除</el-button
                 >
               </el-space>
@@ -674,7 +682,7 @@ onMounted(loadClasses);
           :data="questions"
           highlight-current-row
           row-key="id"
-          @current-change="selectQuestion"
+          @current-change="handleQuestionChange"
         >
           <el-table-column label="顺序" prop="questionOrder" width="90" />
           <el-table-column label="题目标题" min-width="180" prop="title" />
@@ -693,7 +701,7 @@ onMounted(loadClasses);
                     <el-button
                       :disabled="!isDraftStatus"
                       link
-                      @click="editQuestion(row)"
+                      @click="editQuestion(row as QuestionsVO)"
                     >
                       编辑
                     </el-button>
@@ -709,7 +717,7 @@ onMounted(loadClasses);
                       :disabled="!isDraftStatus"
                       link
                       type="danger"
-                      @click="removeQuestion(row)"
+                      @click="removeQuestion(row as QuestionsVO)"
                     >
                       删除
                     </el-button>
@@ -833,7 +841,7 @@ onMounted(loadClasses);
                           link
                           @click="
                             editingTestCase = {
-                              ...row,
+                              ...(row as TestCasesVO),
                               inputDataText: formatJsonText(row.inputData),
                             };
                             testCaseDialog = true;
@@ -853,7 +861,7 @@ onMounted(loadClasses);
                           :disabled="!isDraftStatus"
                           link
                           type="danger"
-                          @click="removeTestCase(row)"
+                          @click="removeTestCase(row as TestCasesVO)"
                         >
                           删除
                         </el-button>

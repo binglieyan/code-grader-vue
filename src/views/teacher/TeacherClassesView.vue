@@ -160,18 +160,18 @@ onMounted(loadClasses);
                 <el-button
                   link
                   type="primary"
-                  @click="loadStudents(row.classCode)"
+                  @click="loadStudents((row as ClassesVO).classCode)"
                   >查看学生</el-button
                 >
                 <el-button
                   link
                   @click="
-                    editing = row;
+                    editing = (row as ClassesVO);
                     dialogVisible = true;
                   "
                   >编辑</el-button
                 >
-                <el-button link type="danger" @click="removeClass(row)"
+                <el-button link type="danger" @click="removeClass(row as ClassesVO)"
                   >删除</el-button
                 >
               </el-space>
@@ -199,7 +199,7 @@ onMounted(loadClasses);
           <el-table-column label="班级代码" min-width="120" prop="classCode" />
           <el-table-column label="操作" width="120">
             <template #default="{ row }">
-              <el-button link type="danger" @click="removeStudent(row)"
+              <el-button link type="danger" @click="removeStudent(row as StudentVO)"
                 >移除</el-button
               >
             </template>

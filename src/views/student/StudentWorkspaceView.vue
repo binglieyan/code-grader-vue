@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { computed, onMounted, reactive, ref } from 'vue';
-import { ElMessage, ElDialog } from 'element-plus';
-import { Loading } from '@element-plus/icons-vue';
+import { ElMessage } from 'element-plus';
 import PageIntro from '../../components/PageIntro.vue';
 import MonacoEditor from '../../components/MonacoEditor.vue';
 import { studentApi } from '@/api/services.js';
@@ -24,7 +23,7 @@ const answerForm = reactive({
   studentAnswer: '',
   file: null as File | null,
 });
-const submissionLoading = ref(false);
+
 
 // 作业搜索文本
 const assignmentSearchText = ref('');
@@ -84,6 +83,10 @@ const loadAssignments = async () => {
   }
 };
 
+const handleAssignmentChange = (row: AssignmentVO | null) => {
+  if (row) selectAssignment(row);
+};
+
 const selectAssignment = async (row: AssignmentVO) => {
   if (!row?.id) return;
 
@@ -120,6 +123,10 @@ const selectAssignment = async (row: AssignmentVO) => {
     ElMessage.error(message);
   }
 };
+const handleQuestionChange = (row: QuestionsVO | null) => {
+  if (row) selectQuestion(row);
+};
+
 const selectQuestion = async (row: QuestionsVO) => {
   if (!row?.id) return;
 
@@ -160,18 +167,15 @@ const createSubmission = async () => {
     return;
   }
 
-  submissionLoading.value = true;
   try {
     await studentApi.createSubmission(currentAssignment.value.id);
-    ElMessage.success('作业提交记录已创建，自动判题完成');
+    ElMessage.success('作业提交成功，系统将在后台自动判题');
   } catch (error) {
     const message =
       error instanceof Error
         ? error.message
-        : '作业提交记录已创建，自动判题失败';
+        : '作业提交失败';
     ElMessage.error(message);
-  } finally {
-    submissionLoading.value = false;
   }
 };
 
@@ -234,7 +238,7 @@ onMounted(() => loadAssignments());
         <el-table
           :data="filteredAssignments"
           highlight-current-row
-          @current-change="selectAssignment"
+          @current-change="handleAssignmentChange"
         >
           <el-table-column label="作业标题" min-width="120" prop="title" />
           <el-table-column label="班级代码" prop="classCode" width="80" />
@@ -271,7 +275,7 @@ onMounted(() => loadAssignments());
         <el-table
           :data="questions"
           highlight-current-row
-          @current-change="selectQuestion"
+          @current-change="handleQuestionChange"
         >
           <el-table-column label="序号" prop="questionOrder" width="80" />
           <el-table-column label="题目标题" min-width="180" prop="title" />
@@ -325,7 +329,6 @@ onMounted(() => loadAssignments());
             </div>
             <el-space>
               <el-button
-                :loading="submissionLoading"
                 type="primary"
                 @click="createSubmission"
                 >提交作业</el-button
@@ -382,21 +385,6 @@ onMounted(() => loadAssignments());
       </section>
     </div>
 
-    <!-- 提交等待弹框 -->
-    <el-dialog
-      v-model="submissionLoading"
-      :close-on-click-modal="false"
-      :show-close="false"
-      align-center
-      class="submission-loading-dialog"
-    >
-      <div class="loading-content">
-        <el-icon class="is-loading loading-spinner" :size="60">
-          <Loading />
-        </el-icon>
-        <p class="loading-text">已创建提交记录，正在判题中请稍候...</p>
-      </div>
-    </el-dialog>
   </div>
 </template>
 
@@ -453,25 +441,6 @@ onMounted(() => loadAssignments());
   height: 120px;
   border-radius: 4px;
   overflow: hidden;
-}
-
-.submission-loading-dialog .loading-content {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 24px;
-  padding: 20px;
-}
-
-.submission-loading-dialog .loading-spinner {
-  color: var(--el-color-primary);
-}
-
-.submission-loading-dialog .loading-text {
-  font-size: 16px;
-  color: var(--el-text-color-regular);
-  margin: 0;
-  text-align: center;
 }
 
 @media (max-width: 1360px) {

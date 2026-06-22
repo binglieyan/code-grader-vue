@@ -246,7 +246,7 @@ loadClasses();
           v-if="checks.length"
           :data="checks"
           highlight-current-row
-          @current-change="loadComparisons"
+          @current-change="(row: PlagiarismChecksVO | null) => row && loadComparisons(row)"
         >
           <el-table-column label="任务 ID" prop="id" width="90" />
           <el-table-column label="作业 ID" prop="assignmentId" width="100" />
@@ -277,7 +277,7 @@ loadClasses();
                 :disabled="!row.completedAt"
                 size="small"
                 type="primary"
-                @click="downloadReport(row)"
+                @click="downloadReport(row as PlagiarismChecksVO)"
               >
                 下载报告
               </el-button>

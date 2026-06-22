@@ -71,6 +71,10 @@ const loadAssignments = async () => {
   }
 };
 
+const handleAssignmentChange = (row: AssignmentVO | null) => {
+  if (row) selectAssignment(row);
+};
+
 const selectAssignment = async (row: AssignmentVO) => {
   if (!row?.id) return;
 
@@ -111,6 +115,10 @@ const selectAssignment = async (row: AssignmentVO) => {
     const message = error instanceof Error ? error.message : '加载题目列表失败';
     ElMessage.error(message);
   }
+};
+
+const handleQuestionChange = (row: QuestionsBriefVO | null) => {
+  if (row) selectQuestion(row);
 };
 
 const selectQuestion = async (row: QuestionsBriefVO) => {
@@ -213,7 +221,7 @@ onMounted(() => loadAssignments());
         <el-table
           :data="filteredAssignments"
           highlight-current-row
-          @current-change="selectAssignment"
+          @current-change="handleAssignmentChange"
         >
           <el-table-column label="作业标题" min-width="120" prop="title" />
           <el-table-column label="班级" prop="classCode" width="80" />
@@ -292,7 +300,7 @@ onMounted(() => loadAssignments());
       <el-table
         :data="questions"
         highlight-current-row
-        @current-change="selectQuestion"
+        @current-change="handleQuestionChange"
       >
         <el-table-column label="顺序" prop="questionOrder" width="80" />
         <el-table-column label="题目标题" min-width="180" prop="title" />
